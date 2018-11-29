@@ -1,0 +1,31 @@
+Can't really sort a tree
+Balancing trees is hard b/c choosing a proper root is hard
+
+- take out all node and sort and put them back
+
+A fancier version
+
+if already a tree, rotate it unil it is a list, then rotate back
+// which is better b/c no extra space needed
+
+Move the child of one to be child of another
+
+AVL Properties 
+- try to keep children balanced. The left hight should be about the same as the right height
+- if not balanced, correct.
+- height differnece should not be other than -1,0,1
+- 4 cases, ll,lr,rr,rl
+
+Red-Black trees
+//which java uses
+use color to keep track off height
+make sure children have different color than he parent
+6 cases
+
+Treaps
+Randomized priority Tree Weighings
+- Inserting items inba random order almost always leads to a balanced tree
+- flipping a cpin
+- a combination with heap => tree+ heap= treap
+
+
