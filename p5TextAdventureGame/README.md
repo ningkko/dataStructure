@@ -21,7 +21,7 @@ Items:
 
 #### Since the UI is to an amazing extent antihumanly ugly and complicated, I put a demo here.
 #### But it seems that the picture file is too big so there are some problems uplaoding/loading it, so here is a map:
-![alt text](https://github.com/ningkko/dataStructure/blob/master/p5TextAdventureGame/map.jpeg)
+![alt text](https://github.com/ningkko/dataStructure/blob/master/p5TextAdventureGame/map.jpg)
 
 
 ![alt text](https://github.com/ningkko/dataStructure/blob/master/p5TextAdventureGame/demo.jpeg)
