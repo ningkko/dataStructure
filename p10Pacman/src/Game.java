@@ -3,8 +3,12 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
-public class Game {
+public class Game{
 
+	/**
+	 * god of painting
+	 */
+	Graphics g;
 	/**
 	 * A world
 	 */
@@ -48,11 +52,7 @@ public class Game {
 
 		
 		//we have world after knowing about its citizens
-		if(playerNumber==1) {
-			gameWorld=new World(player1);	
-		}else {
-			gameWorld=new World(player1,player2);
-		}
+		gameWorld=new World(players);
 		
 		// and then we observe
 		JFrame frame=new JFrame();
@@ -63,11 +63,7 @@ public class Game {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-		
-		// and we appear
-		for(Player p:players) {
-			p.draw(W);
-		}
+
 		
 		// and then we start living
 		gameWorld.startGame();
@@ -79,7 +75,7 @@ public class Game {
 	 * @return how many?
 	 */
 	public int getplayerNumber() {
-		return 1;
+		return 2;
 	}
 
 }

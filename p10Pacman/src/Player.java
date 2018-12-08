@@ -17,10 +17,13 @@ public class Player extends Rectangle{
 	private final int WIDTH=32;
 	
 	/**
-	 * inherit later from the world.
+	 * pixel one step
 	 */
-	public Graphics g;
+	private int step = 4;
 	
+	/**
+	 * ID
+	 */
 	public int playerID;
 	
 	public Player(int x, int y, int playerID) {
@@ -30,9 +33,24 @@ public class Player extends Rectangle{
 		this.playerID=playerID;
 	}
 	
-	public void tick() {}
 	
-	public void draw() {
+	public void moveLeft() {
+		this.x-=step;
+	}
+	
+	public void moveRight() {
+		this.x+=step;
+	}
+	
+	public void moveUp() {
+		this.y-=step;
+	}
+	
+	public void moveDown() {
+		this.y+=step;
+	}
+	
+	public void draw(Graphics g) {
 		
 		if(this.playerID==1) {
 			g.setColor(Color.YELLOW);
@@ -43,5 +61,6 @@ public class Player extends Rectangle{
 		g.fillRect(x, y, this.WIDTH, this.HEIGHT);
 		
 	}
-
+	
+	
 }
