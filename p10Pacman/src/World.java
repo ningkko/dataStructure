@@ -20,7 +20,7 @@ public class World extends Canvas implements Runnable, KeyListener{
 	/**
 	 * World size
 	 */
-	public static int WORLDWIDTH=800, WORLDHEIGHT=600;
+	public int worldWidth, WorldHeight;
 	
 	/**
 	 * game threads
@@ -35,9 +35,10 @@ public class World extends Canvas implements Runnable, KeyListener{
 	/**
 	 * players
 	 */
-	ArrayList<Player> players;
+	public ArrayList<Player> players;
 	Player player1;
 	Player player2;
+
 	
 	/**
 	 * Where should the players move?
@@ -46,17 +47,28 @@ public class World extends Canvas implements Runnable, KeyListener{
 	private String direction2;
 	
 	/**
+	 * world map
+	 */
+	public Map map;
+	
+	
+	/**
 	 * A tinny world
 	 */
-	public World(ArrayList<Player> players){
+	public World(ArrayList<Player> players,int worldWidth,int worldHeight,String worldName,int playerSize){
 		/**
 		 * Name this world
 		 */
-		this.worldName="Super Dophine Bepop";
+		this.worldName=worldName;
 		
+		this.WorldHeight=worldHeight;
+		this.worldWidth=worldWidth;
 		// set world size
-		this.setPreferredSize(new Dimension(World.WORLDWIDTH,World.WORLDHEIGHT));
-	
+		this.setPreferredSize(new Dimension(this.worldWidth,this.WorldHeight));
+
+		addKeyListener(this);
+		
+		
 		this.players=players;
 		
 		player1=players.get(0);
@@ -64,11 +76,13 @@ public class World extends Canvas implements Runnable, KeyListener{
 		if(players.size()==2) {
 			player2=players.get(1);
 		}
-		
-		addKeyListener(this);
-		
+				
 		this.direction1="";
 		this.direction2="";
+		
+		this.map=new Map("/map/l1.png",playerSize);
+		
+		
 	}
 
 	/**
@@ -123,11 +137,18 @@ public class World extends Canvas implements Runnable, KeyListener{
 		
 		Graphics g=bs.getDrawGraphics();
 		
+		// world
 		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, World.WORLDWIDTH, World.WORLDHEIGHT);
+		g.fillRect(0, 0, this.worldWidth, this.WorldHeight);
+		
+		//players
 		for(Player p:this.players){
 			p.draw(g);
 		}
+		
+		//map
+		map.drawMap(g);
+		
 		g.dispose();
 		bs.show();
 		
@@ -168,6 +189,7 @@ public class World extends Canvas implements Runnable, KeyListener{
 				
 				this.movePlayers();
 				this.draw();
+				map.moveMosters();
 				fps++;
 				delta--;
 			}
@@ -216,31 +238,35 @@ public class World extends Canvas implements Runnable, KeyListener{
 	
 	public void movePlayers() {
 		
+		for(Player p: players) {
+			p.wrap();
+		}
+		
 		//p1
-		if(this.direction1.equals("l")&&this.player1.x>5) {
+		if(this.direction1.equals("l")) {
 			this.player1.moveLeft();
 		}
-		else if (this.direction1.equals("r")&&this.player1.x<WORLDWIDTH-5) {
+		else if (this.direction1.equals("r")) {
 			this.player1.moveRight();
 		}
-		else if (this.direction1.equals("u")&&this.player1.y>5) {
+		else if (this.direction1.equals("u")) {
 			this.player1.moveUp();
 		}
-		else if (this.direction1.equals("d")&&this.player1.x<WORLDHEIGHT-5) {
+		else if (this.direction1.equals("d")) {
 			this.player1.moveDown();
 		}
 		
 		//p2
-		if(this.direction2.equals("l")&&this.player2.x>5) {
+		if(this.direction2.equals("l")) {
 			this.player2.moveLeft();
 		}
-		else if (this.direction2.equals("r")&&this.player2.x<5) {
+		else if (this.direction2.equals("r")) {
 			this.player2.moveRight();
 		}
-		else if (this.direction2.equals("u")&&this.player2.y>5) {
+		else if (this.direction2.equals("u")) {
 			this.player2.moveUp();
 		}
-		else if (this.direction2.equals("d")&&this.player2.x<WORLDHEIGHT-5) {
+		else if (this.direction2.equals("d")) {
 			this.player2.moveDown();
 		}
 	}
@@ -280,8 +306,8 @@ public class World extends Canvas implements Runnable, KeyListener{
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
 		
+	
 	}
 
 }

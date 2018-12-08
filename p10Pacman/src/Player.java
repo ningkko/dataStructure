@@ -17,11 +17,6 @@ public class Player extends Rectangle{
 	private final int WIDTH=32;
 	
 	/**
-	 * pixel one step
-	 */
-	private int step = 4;
-	
-	/**
 	 * ID
 	 */
 	public int playerID;
@@ -35,20 +30,42 @@ public class Player extends Rectangle{
 	
 	
 	public void moveLeft() {
-		this.x-=step;
+		this.x-=Game.playerStep;
 	}
 	
 	public void moveRight() {
-		this.x+=step;
+		this.x+=Game.playerStep;
 	}
 	
 	public void moveUp() {
-		this.y-=step;
+		this.y-=Game.playerStep;
 	}
 	
 	public void moveDown() {
-		this.y+=step;
+		this.y+=Game.playerStep;
 	}
+	
+	
+	/**
+	 * wrap the player in the world
+	 */
+	public void wrap() {
+		
+		if (this.getX()<2) {
+			this.x=Game.gameWorld.worldWidth-5;
+		}
+		else if(this.getX()>Game.gameWorld.worldWidth-2) {
+			this.x=5;
+		}
+		
+		if (this.getY()<2) {
+			this.y=Game.gameWorld.WorldHeight-5;
+		}
+		else if (this.getY()>Game.gameWorld.WorldHeight-2) {
+			this.y=5;
+		}
+	}
+	
 	
 	public void draw(Graphics g) {
 		
