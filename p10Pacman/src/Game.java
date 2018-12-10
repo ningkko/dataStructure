@@ -1,9 +1,4 @@
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class Game{
@@ -34,6 +29,11 @@ public class Game{
 	 * Monster speed
 	 */
 	public static int monsterStep;
+
+	/**
+	 * level
+	 */
+	public static String gameLevel;
 	
 	/**
 	 * if any of the players get caught by monsters
@@ -69,12 +69,16 @@ public class Game{
 		p1Lose=false;
 		p2Lose=false;
 		
+		
+		//start from map l1
+		gameLevel="l1";
+		
 		gameWorld=new World(players,worldWidth,worldHeight,worldName,Game.playerSize);
 		
 		
 		JFrame frame=new JFrame();
 		
-		frame.setTitle(gameWorld.worldName);
+		frame.setTitle(gameWorld.getWorldName());
 		frame.add(gameWorld);
 		frame.setResizable(false);
 		frame.pack();
@@ -85,6 +89,7 @@ public class Game{
 		
 		// and then we start living
 		gameWorld.startGame();
+		
 	}
 	
 	
@@ -95,20 +100,41 @@ public class Game{
 		return 2;
 	}
 	
-	public static BufferedImage setImage(String dir) {
-		
-		BufferedImage img = null;
-		try
-		{
-		    img = ImageIO.read( new File(dir));
 
-		}
-		catch ( IOException e )
-		{
-		    e.printStackTrace();
-		}
-		return img;
+	/**
+	 * if all food is eaten, enter new level
+	 */
+	public static void win() {
 		
+		if (World.map.food.size()==0) {
+			Game.nextLevel();
+		}
+	}
+	
+	
+	/**
+	 * manually enters abnew level
+	 */
+	public static void nextLevel() {
+		
+		if(Game.gameLevel=="l1") {
+			
+			Game.gameLevel="l2";
+			
+		}
+		else if(Game.gameLevel=="l1") {
+			
+			Game.gameLevel="l3";
+			
+		}
+		else if(Game.gameLevel=="l3") {
+			
+			Game.gameLevel="l4";
+			
+		}
+		
+		
+		World.map=new Map(Game.gameLevel,World.players.size());
 	}
 	
 		

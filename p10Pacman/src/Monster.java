@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Graphics;
 
 public class Monster extends Actor{
@@ -21,7 +20,17 @@ public class Monster extends Actor{
 	 */
 	private int step;
 	
+	/**
+	 * range able to detect player
+	 */
 	private int detectableDistance;
+	
+	
+	/**
+	 * spirit
+	 */
+	public Spirit spirit;
+	
 	/**
 	 * 
 	 */
@@ -29,6 +38,7 @@ public class Monster extends Actor{
 
 	public Monster( int x , int y) {
 
+		this.spirit=new Spirit("/monster/ning1.png");
 		this.step=Game.monsterStep;
 		this.chasing=false;
 		this.detectableDistance=100;
@@ -179,8 +189,7 @@ public class Monster extends Actor{
 	
 		public void drawMonster(Graphics g) {
 			
-			g.setColor(Color.BLUE);
-			g.fillRect(x, y, Game.playerSize, Game.playerSize);
+			g.drawImage(this.spirit.getImg(),x,y,null);
 
 	}
 

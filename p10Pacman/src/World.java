@@ -30,12 +30,12 @@ public class World extends Canvas implements Runnable, KeyListener{
 	/**
 	 * worldName of this world
 	 */
-	public String worldName;
+	private String worldName;
 	
 	/**
 	 * players
 	 */
-	public ArrayList<Player> players;
+	public static ArrayList<Player> players;
 	Player player1;
 	Player player2;
 
@@ -51,6 +51,7 @@ public class World extends Canvas implements Runnable, KeyListener{
 	 */
 	public static Map map;
 	
+
 	
 	/**
 	 * A tinny world
@@ -59,7 +60,7 @@ public class World extends Canvas implements Runnable, KeyListener{
 		/**
 		 * Name this world
 		 */
-		this.worldName=worldName;
+		this.setWorldName(worldName);
 		
 		this.WorldHeight=worldHeight;
 		this.worldWidth=worldWidth;
@@ -69,7 +70,7 @@ public class World extends Canvas implements Runnable, KeyListener{
 		addKeyListener(this);
 		
 		
-		this.players=players;
+		World.players=players;
 		
 		player1=players.get(0);
 		
@@ -80,7 +81,7 @@ public class World extends Canvas implements Runnable, KeyListener{
 		this.direction1="";
 		this.direction2="";
 		
-		World.map=new Map("/map/l1.png",playerSize);
+		World.map=new Map(Game.gameLevel,playerSize);
 		
 		
 	}
@@ -142,7 +143,7 @@ public class World extends Canvas implements Runnable, KeyListener{
 		g.fillRect(0, 0, this.worldWidth, this.WorldHeight);
 		
 		//players
-		for(Player p:this.players){
+		for(Player p:World.players){
 			p.draw(g);
 		}
 		
@@ -327,6 +328,16 @@ public class World extends Canvas implements Runnable, KeyListener{
 	public void keyTyped(KeyEvent e) {
 		
 	
+	}
+
+
+
+	public void setWorldName(String worldName) {
+		this.worldName = worldName;
+	}
+
+	public String getWorldName() {
+		return this.worldName;
 	}
 
 }

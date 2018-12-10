@@ -26,11 +26,11 @@ public class Map {
 	public ArrayList<Monster> monsters;
 	
 	
-	public Map(String mapPath, int playerSize) {
+	public Map(String level, int playerSize) {
 		
 		try{
 			// read in map
-			BufferedImage map=ImageIO.read(getClass().getResource(mapPath));
+			BufferedImage map=ImageIO.read(getClass().getResource(String.format("/map/%s.png", level)));
 			this.width=map.getWidth();
 			this.height=map.getHeight();
 
