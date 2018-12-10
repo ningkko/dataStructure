@@ -1,8 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 
-public class Player extends Rectangle{
+public class Player extends Actor{
 	
 	
 	/**
@@ -19,52 +18,24 @@ public class Player extends Rectangle{
 	/**
 	 * ID
 	 */
-	public int playerID;
+	private int playerID;
+	
+	
+	/**
+	 * game points
+	 */
+	private int points;
+	
 	
 	public Player(int x, int y, int playerID) {
 		
 		//set bounds
 		this.setBounds(x, y, this.HEIGHT, this.WIDTH);
 		this.playerID=playerID;
-	}
-	
-	
-	public void moveLeft() {
-		this.x-=Game.playerStep;
-	}
-	
-	public void moveRight() {
-		this.x+=Game.playerStep;
-	}
-	
-	public void moveUp() {
-		this.y-=Game.playerStep;
-	}
-	
-	public void moveDown() {
-		this.y+=Game.playerStep;
-	}
-	
-	
-	/**
-	 * wrap the player in the world
-	 */
-	public void wrap() {
+		this.step=Game.playerStep;
 		
-		if (this.getX()<2) {
-			this.x=Game.gameWorld.worldWidth-5;
-		}
-		else if(this.getX()>Game.gameWorld.worldWidth-2) {
-			this.x=5;
-		}
-		
-		if (this.getY()<2) {
-			this.y=Game.gameWorld.WorldHeight-5;
-		}
-		else if (this.getY()>Game.gameWorld.WorldHeight-2) {
-			this.y=5;
-		}
 	}
+	
 	
 	
 	public void draw(Graphics g) {
@@ -78,6 +49,33 @@ public class Player extends Rectangle{
 		g.fillRect(x, y, this.WIDTH, this.HEIGHT);
 		
 	}
+
 	
+	public void eat() {
+		
+		Map map=World.map;
+		
+		for(Food f:map.food) {
+			if (this.intersects(f)) {
+				map.food.remove(f);
+				this.points+=10;
+				break;
+			}
+		}
+		
+	}
+
+
+
+	public int getPoints() {
+		return points;
+	}
+
+
+
+	public void setPoints(int points) {
+		this.points = points;
+	}
 	
+
 }

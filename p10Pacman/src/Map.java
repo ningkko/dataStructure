@@ -27,44 +27,34 @@ public class Map {
 	
 	
 	public Map(String mapPath, int playerSize) {
+		
 		try{
 			// read in map
 			BufferedImage map=ImageIO.read(getClass().getResource(mapPath));
 			this.width=map.getWidth();
 			this.height=map.getHeight();
-			
-			/**
-			 * all pixels in the map
-			 */
-			int[] pixels=new int[width*height];
-			
+
 			walls=new Wall[width][height];
-			
+
 			food=new ArrayList<Food>();
-			
+
 			monsters=new ArrayList<Monster>();
-			//get color values in the map
-			map.getRGB(0, 0,width,height,pixels,width,0);
-		
+
 			// read the color of each pixel in the map
-			for(int mapX=0;mapX<width;mapX++) {
-				for(int mapY=0;mapY<height;mapY++) {
-					
-					int colorValue =pixels[mapX+mapY*width];
-					
-					System.out.println(colorValue);
+			for(int mapX=0;mapX<this.width;mapX++) {
+				for(int mapY=0;mapY<this.height;mapY++) {
+			
+					int colorValue =map.getRGB(mapX, mapY);					
+					//System.out.printf("colorValue: %08x\n",colorValue);
 					
 					// if the pixel if black, it's a wall
 					if(colorValue==0xFF000000) {
-						
-						System.out.println("wall");
 						
 						walls[mapX][mapY]= new Wall(mapX,mapY);
 					}
 					//else if the position on the map is a red tile,
 					else if(colorValue==0xFFFF0000) {
 						
-						System.out.println("p1");
 						//move player 1 to the position
 						Game.player1.x=mapX*playerSize;
 						Game.player1.y=mapY*playerSize;
@@ -72,7 +62,6 @@ public class Map {
 					// if purple
 					else if(colorValue==0xFFFF00FF) {
 						
-						System.out.println("p2");
 						// move player2 there
 						Game.player2.x=mapX*playerSize;
 						Game.player2.y=mapY*playerSize;
@@ -80,13 +69,11 @@ public class Map {
 					// if blue. then it's a monster
 					else if(colorValue==0xFF0000FF) {
 						
-						System.out.println("Monster");
 						monsters.add(new Monster(mapX,mapY));
 					}
 					// else it's food
 					else {
 						
-						System.out.println("Food");
 						food.add(new Food(mapX,mapY));
 
 					}
@@ -116,6 +103,10 @@ public class Map {
 			f.drawFood(g);
 		}
 		
+		for (Monster m : monsters) {
+			m.drawMonster(g);
+		}
+		
 	}
 	
 	/**
@@ -125,6 +116,24 @@ public class Map {
 		
 		for(Monster m: monsters) {
 			m.move();
+		}
+	}
+	
+	public void detectLose() {
+		
+		for (Monster m:monsters) {
+			
+			if(Math.abs(Game.player1.getX()-m.getX())<20&&
+				Math.abs(Game.player1.getY()-m.getY())<20) {
+				
+				Game.p1Lose=true;
+			}
+			
+			if(Math.abs(Game.player2.getX()-m.getX())<20&&
+					Math.abs(Game.player1.getY()-m.getY())<20) {
+					
+					Game.p2Lose=true;
+				}
 		}
 	}
 	

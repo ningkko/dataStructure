@@ -49,7 +49,7 @@ public class World extends Canvas implements Runnable, KeyListener{
 	/**
 	 * world map
 	 */
-	public Map map;
+	public static Map map;
 	
 	
 	/**
@@ -80,7 +80,7 @@ public class World extends Canvas implements Runnable, KeyListener{
 		this.direction1="";
 		this.direction2="";
 		
-		this.map=new Map("/map/l1.png",playerSize);
+		World.map=new Map("/map/l1.png",playerSize);
 		
 		
 	}
@@ -178,6 +178,9 @@ public class World extends Canvas implements Runnable, KeyListener{
 		
 		while(isRunning) {
 			
+			if(Game.p1Lose&&Game.p2Lose) {
+				endGame();
+			}
 			// get current time using nanotime();
 			long currentTime=System.nanoTime();
 			//update delta using nano sec as unit
@@ -186,8 +189,9 @@ public class World extends Canvas implements Runnable, KeyListener{
 			previousTime=currentTime;
 			
 			while(delta>=1) {
-				
 				this.movePlayers();
+				Game.player1.eat();
+				Game.player2.eat();
 				this.draw();
 				map.moveMosters();
 				fps++;
@@ -204,35 +208,50 @@ public class World extends Canvas implements Runnable, KeyListener{
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		
-		//player1
-		if(e.getKeyCode()==KeyEvent.VK_A) {
-			this.direction1="l";
+
+		//player1	
+		if(!Game.p1Lose) {
+
+			if(e.getKeyCode()==KeyEvent.VK_A) {
+				this.direction1="l";
+			}
+			if(e.getKeyCode()==KeyEvent.VK_D) {
+				this.direction1="r";
+			}
+			if(e.getKeyCode()==KeyEvent.VK_W) {
+				this.direction1="u";
+			}
+			if(e.getKeyCode()==KeyEvent.VK_S) {
+				this.direction1="d";
+			}
+			
+		}else {
+			
+			this.direction1="";
 		}
-		else if(e.getKeyCode()==KeyEvent.VK_D) {
-			this.direction1="r";
-		}
-		else if(e.getKeyCode()==KeyEvent.VK_W) {
-			this.direction1="u";
-		}
-		else if(e.getKeyCode()==KeyEvent.VK_S) {
-			this.direction1="d";
-		}
-		
 		
 		//player2
-		if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
-			this.direction2="r";
+		
+		if(!Game.p2Lose) {
+			
+			if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
+				this.direction2="r";
+				}
+			if (e.getKeyCode()==KeyEvent.VK_LEFT) {
+				this.direction2="l";
+			}
+			if (e.getKeyCode()==KeyEvent.VK_UP) {
+				this.direction2="u";
+			}
+			if (e.getKeyCode()==KeyEvent.VK_DOWN) {
+				this.direction2="d";
+			}
+			
+		}else {
+			
+			this.direction2="";
 		}
-		else if (e.getKeyCode()==KeyEvent.VK_LEFT) {
-			this.direction2="l";
-		}
-		else if (e.getKeyCode()==KeyEvent.VK_UP) {
-			this.direction2="u";
-		}
-		else if (e.getKeyCode()==KeyEvent.VK_DOWN) {
-			this.direction2="d";
-		}
+	
 	}
 
 	
@@ -244,30 +263,30 @@ public class World extends Canvas implements Runnable, KeyListener{
 		
 		//p1
 		if(this.direction1.equals("l")) {
-			this.player1.moveLeft();
+			this.player1.moveLeft(player1.getStep());
 		}
 		else if (this.direction1.equals("r")) {
-			this.player1.moveRight();
+			this.player1.moveRight(player1.getStep());
 		}
 		else if (this.direction1.equals("u")) {
-			this.player1.moveUp();
+			this.player1.moveUp(player1.getStep());
 		}
 		else if (this.direction1.equals("d")) {
-			this.player1.moveDown();
+			this.player1.moveDown(player1.getStep());
 		}
 		
 		//p2
 		if(this.direction2.equals("l")) {
-			this.player2.moveLeft();
+			this.player2.moveLeft(player2.getStep());
 		}
 		else if (this.direction2.equals("r")) {
-			this.player2.moveRight();
+			this.player2.moveRight(player2.getStep());
 		}
 		else if (this.direction2.equals("u")) {
-			this.player2.moveUp();
+			this.player2.moveUp(player2.getStep());
 		}
 		else if (this.direction2.equals("d")) {
-			this.player2.moveDown();
+			this.player2.moveDown(player2.getStep());
 		}
 	}
 	@Override

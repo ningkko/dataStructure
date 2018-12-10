@@ -1,11 +1,27 @@
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 
-public class Monster extends Rectangle{
+public class Monster extends Actor{
 
-
-	public int detectableDistance;
+	/**
+	 * is the monster chasing some player yet?
+	 */
+	private boolean chasing;
+	
+	/**
+	 * 1=left
+	 * 2=right
+	 * 3=up
+	 * 4=down
+	 */
+	private int direction;
+	
+	/**
+	 * step
+	 */
+	private int step;
+	
+	private int detectableDistance;
 	/**
 	 * 
 	 */
@@ -13,7 +29,10 @@ public class Monster extends Rectangle{
 
 	public Monster( int x , int y) {
 
-		
+		this.step=Game.monsterStep;
+		this.chasing=false;
+		this.detectableDistance=100;
+		this.setStep(Game.monsterStep);
 		setBounds(x*Game.playerSize,y*Game.playerSize,Game.playerSize, Game.playerSize);
 		
 	}
@@ -25,102 +44,146 @@ public class Monster extends Rectangle{
 		 * within detectable distance of P1?
 		 */
 		boolean nearP1=false;
-		if ((Math.abs(this.getX()-Game.player1.getX())<=detectableDistance)&&
-				(Math.abs(this.getY()-Game.player1.getY())<=detectableDistance)) {
-			nearP1=true;
-		}
 		
+		//stop chasing once caught
+		if(!Game.p1Lose) {
+			
+			if ((Math.abs(this.getX()-Game.player1.getX())<=detectableDistance)&&
+					(Math.abs(this.getY()-Game.player1.getY())<=detectableDistance)) {
+				nearP1=true;
+				this.chasing=true;
+				
+			}
+		}
 		/**
 		 * within detectable distance of P2?
 		 */
 		boolean nearP2=false;
-		if ((Math.abs(this.getX()-Game.player2.getX())<=detectableDistance)&&
-				(Math.abs(this.getY()-Game.player2.getY())<=detectableDistance)) {
-			nearP2=true;
-		}
 		
-		// randomly chase one of them if near both
-		if(nearP1&&nearP2) {
+		if(!Game.p2Lose) {
 			
-			if(Math.random()<0.5) {
-				this.chase(1);
-			}else {
-				this.chase(2);
+			if ((Math.abs(this.getX()-Game.player2.getX())<=detectableDistance)&&
+					(Math.abs(this.getY()-Game.player2.getY())<=detectableDistance)) {
+				nearP2=true;
+				this.chasing=true;
+				
 			}
 		}
-		else if (nearP1) {
-			this.chase(1);
+		
+		if(this.chasing==false) {
+			
+			this.randomlyMove();
 		}
+		
 		else {
-			this.chase(2);
+			
+			// randomly chase one of them if near both
+			if(nearP1&&nearP2) {
+				
+				if(Math.random()<0.5) {
+					this.chase(1);
+				}
+				else {
+					this.chase(2);
+				}
+				
+			}
+			
+			else if (nearP1) {
+				this.chase(1);
+			}
+			else if (nearP2){
+				this.chase(2);
+			}
+			else {
+				chasing=false;
+			}
+			
+			
 		}
+		
+		
 	}
 	
 	
 	public void chase(int playerID) {
 		
-		Player p;
+		Player p=null;
 		//chase player1
-		if(playerID==1) {
+		if(playerID==1&&!Game.p1Lose) {
 			p=Game.player1;
 		}
 		//else chase p2
-		else {
+		else if(playerID==2&&!Game.p2Lose){
 			p=Game.player2;
 		}
 		
-		if (p.getX()<this.getX()) {
-			this.moveLeft();
+		if(p!=null) {
+			if (p.getX()<this.getX()) {
+				this.moveLeft(Game.monsterStep);
+			}
+			else if (p.getX()>this.getX()) {
+				this.moveRight(Game.monsterStep);
+			}
+			if (p.getY()>this.getY()) {
+				this.moveDown(Game.monsterStep);
+			}
+			else if (p.getY()<this.getY()) {
+				this.moveUp(Game.monsterStep);
+			}
 		}
-		else if (p.getX()>this.getX()) {
-			this.moveRight();
+		
+		
+	}
+	
+	public void selectNewDirection() {
+		double chance=Math.random();
+		
+		if(chance<0.25) {
+			this.direction=1;
 		}
-		else if (p.getY()>this.getY()) {
-			this.moveDown();
+		else if(Math.abs(chance-0.25)<0.25) {
+			this.direction=2;
+			
+		}else if(Math.abs(chance-0.5)<0.25) {
+			this.direction= 3;
+			
+		}else {
+			this.direction= 4;
 		}
-		else if (p.getY()<this.getY()) {
-			this.moveUp();
+	}	
+	
+	public void randomlyMove() {
+		
+		
+		if (Math.random()<0.05) {
+			this.selectNewDirection();
+		}
+		
+		if(this.direction==1) {
+			this.moveLeft(this.step);
+		}
+		else if(this.direction==2) {
+			this.moveRight(this.step);
+		}
+		else if(this.direction==3) {
+			this.moveUp(this.step);
+		}
+		else if(this.direction==4){
+			this.moveUp(this.step);
 		}
 		
 	}
 	
-	public void moveLeft() {
-		this.x-=Game.monsterStep;
-	}
+
 	
-	public void moveRight() {
-		this.x+=Game.monsterStep;
+		public void drawMonster(Graphics g) {
+			
+			g.setColor(Color.BLUE);
+			g.fillRect(x, y, Game.playerSize, Game.playerSize);
+
 	}
-	
-	public void moveUp() {
-		this.y-=Game.monsterStep;
-	}
-	
-	public void moveDown() {
-		this.y+=Game.monsterStep;
-	}
-	
-	/**
-	 * wrap the monster in the world
-	 */
-	public void wrap() {
+
 		
-		if (this.getX()<2) {
-			this.x=Game.gameWorld.worldWidth-5;
-		}
-		else if(this.getX()>Game.gameWorld.worldWidth-2) {
-			this.x=5;
-		}
-		
-		if (this.getY()<2) {
-			this.y=Game.gameWorld.WorldHeight-5;
-		}
-		else if (this.getY()>Game.gameWorld.WorldHeight-2) {
-			this.y=5;
-		}
-	}
-	public void drawMonster(Graphics g) {
-		g.setColor(Color.CYAN);
-		g.fillRect(x, y, Game.playerSize, Game.playerSize);
-	}
+
 }

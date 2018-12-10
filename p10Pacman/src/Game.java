@@ -1,4 +1,9 @@
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class Game{
@@ -30,11 +35,15 @@ public class Game{
 	 */
 	public static int monsterStep;
 	
+	/**
+	 * if any of the players get caught by monsters
+	 */
+	public static boolean p1Lose, p2Lose;
 	
 	public static void main(String[] args) {
 		
 		int playerNumber=2;
-		new Game(800,600,"Super Dophine Bepop",32,playerNumber);
+		new Game(768,576,"Koutenn Madness Returns",32,playerNumber);
 	}
 	
 	
@@ -45,8 +54,8 @@ public class Game{
 		
 		ArrayList<Player> players=new ArrayList<Player>();
 		
-		Game.playerStep=4;
-		Game.monsterStep=2;
+		Game.playerStep=3;
+		Game.monsterStep=1;
 		
 		player1=new Player(50,100,1);
 		players.add(player1);
@@ -55,7 +64,10 @@ public class Game{
 			player2=new Player(400,100,2);
 			players.add(player2);
 		}
-
+		
+		// game status
+		p1Lose=false;
+		p2Lose=false;
 		
 		gameWorld=new World(players,worldWidth,worldHeight,worldName,Game.playerSize);
 		
@@ -64,6 +76,7 @@ public class Game{
 		
 		frame.setTitle(gameWorld.worldName);
 		frame.add(gameWorld);
+		frame.setResizable(false);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
@@ -81,5 +94,22 @@ public class Game{
 	public int getplayerNumber() {
 		return 2;
 	}
+	
+	public static BufferedImage setImage(String dir) {
+		
+		BufferedImage img = null;
+		try
+		{
+		    img = ImageIO.read( new File(dir));
 
+		}
+		catch ( IOException e )
+		{
+		    e.printStackTrace();
+		}
+		return img;
+		
+	}
+	
+		
 }
