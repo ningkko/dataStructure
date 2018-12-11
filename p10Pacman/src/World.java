@@ -52,6 +52,10 @@ public class World extends Canvas implements Runnable, KeyListener{
 	public static Map map;
 	
 
+	/**
+	 * painter
+	 */
+	private Graphics g;
 	
 	/**
 	 * A tinny world
@@ -136,7 +140,7 @@ public class World extends Canvas implements Runnable, KeyListener{
 			return;
 		}
 		
-		Graphics g=bs.getDrawGraphics();
+		g=bs.getDrawGraphics();
 		
 		// world
 		g.setColor(Color.BLACK);
@@ -149,9 +153,9 @@ public class World extends Canvas implements Runnable, KeyListener{
 		
 		//map
 		map.drawMap(g);
-		
-		g.dispose();
+
 		bs.show();
+		g.dispose();
 		
 	}
 	
@@ -177,11 +181,16 @@ public class World extends Canvas implements Runnable, KeyListener{
 		 */
 		double delta = 0;
 		
+		/**
+		 * for changing images
+		 */
+		int frameP1 = 0,frameP2=0;
+		
+		
 		while(isRunning) {
 			
-			if(Game.p1Lose&&Game.p2Lose) {
-				endGame();
-			}
+
+			
 			// get current time using nanotime();
 			long currentTime=System.nanoTime();
 			//update delta using nano sec as unit
@@ -190,13 +199,75 @@ public class World extends Canvas implements Runnable, KeyListener{
 			previousTime=currentTime;
 			
 			while(delta>=1) {
-				this.movePlayers();
-				Game.player1.eat();
-				Game.player2.eat();
+				
 				this.draw();
-				map.moveMosters();
+				
+				//SWITCH IMAGES
+				if(Game.player1.isMoving()) {
+					frameP1++;
+				}
+				
+				if(Game.player2.isMoving()) {
+					frameP2++;
+				}
+				
+				if (frameP1%21==0) {
+					Game.player1.setUseImageNum(1);
+				}else if (frameP1%40==0) {
+					Game.player1.setUseImageNum(2);
+					frameP1=0;
+				}
+				
+				if (frameP2%21==0) {
+					Game.player2.setUseImageNum(1);
+				}else if (frameP2%40==0) {
+					Game.player2.setUseImageNum(2);
+					frameP1=0;
+				}
+
+				
+				// DETECT LOSE
+				if(Game.lose()) {
+				
+					// game over
+					this.drawGameOver();
+					
+					//pause for a sec
+					try 
+				    {
+					   Thread.sleep(2000);
+				    } 
+				    catch(Throwable e) 
+				    {
+				    	System.out.println(e.getMessage()); 
+				    }
+					
+					endGame();
+					
+				}
+				
+				//DETECT WIN
+				
+				Game.checkWin();
+				
+				
+				//PLAYER ACTIONS
+				this.movePlayers();
+				
+				
+				for(Player p: players) {
+					p.isTouched();
+					p.eat();
+					p.saveFriend();
+				}
+
+				//MONSTER ACTION
+				this.moveMosters();
+				
+				//LOOP VARIANTS
 				fps++;
 				delta--;
+				
 			}
 			if(System.currentTimeMillis()-timer>=1000) {
 				fps=0;
@@ -213,17 +284,30 @@ public class World extends Canvas implements Runnable, KeyListener{
 		//player1	
 		if(!Game.p1Lose) {
 
+			//I use direction instead of calling move functions directly because so we can make the character move smoothly
 			if(e.getKeyCode()==KeyEvent.VK_A) {
+				
 				this.direction1="l";
+				player1.setMoving(true);
+				
 			}
 			if(e.getKeyCode()==KeyEvent.VK_D) {
+				
 				this.direction1="r";
+				player1.setMoving(true);
+
 			}
 			if(e.getKeyCode()==KeyEvent.VK_W) {
+				
 				this.direction1="u";
+				player1.setMoving(true);
+
 			}
 			if(e.getKeyCode()==KeyEvent.VK_S) {
+				
 				this.direction1="d";
+				player1.setMoving(true);
+
 			}
 			
 		}else {
@@ -236,16 +320,28 @@ public class World extends Canvas implements Runnable, KeyListener{
 		if(!Game.p2Lose) {
 			
 			if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
+				
 				this.direction2="r";
-				}
+				player2.setMoving(true);
+
+			}
 			if (e.getKeyCode()==KeyEvent.VK_LEFT) {
+				
 				this.direction2="l";
+				player2.setMoving(true);
+
 			}
 			if (e.getKeyCode()==KeyEvent.VK_UP) {
+				
 				this.direction2="u";
+				player2.setMoving(true);
+
 			}
 			if (e.getKeyCode()==KeyEvent.VK_DOWN) {
+				
 				this.direction2="d";
+				player2.setMoving(true);
+
 			}
 			
 		}else {
@@ -255,6 +351,60 @@ public class World extends Canvas implements Runnable, KeyListener{
 	
 	}
 
+	@Override
+	public void keyReleased(KeyEvent e) {
+		
+		//player1
+		if(e.getKeyCode()==KeyEvent.VK_A) {
+			this.direction1="";
+			player1.setMoving(false);
+		}
+		else if(e.getKeyCode()==KeyEvent.VK_D) {
+			this.direction1="";
+			player1.setMoving(false);
+
+		}
+		else if(e.getKeyCode()==KeyEvent.VK_W) {
+			this.direction1="";
+			player1.setMoving(false);
+
+		}
+		else if(e.getKeyCode()==KeyEvent.VK_S) {
+			this.direction1="";
+			player1.setMoving(false);
+
+		}
+		
+		
+		//player2
+		if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
+			this.direction2="";
+			player2.setMoving(false);
+		}
+		else if (e.getKeyCode()==KeyEvent.VK_LEFT) {
+			this.direction2="";
+			player2.setMoving(false);
+
+		}
+		else if (e.getKeyCode()==KeyEvent.VK_UP) {
+			this.direction2="";
+			player2.setMoving(false);
+
+		}
+		else if (e.getKeyCode()==KeyEvent.VK_DOWN) {
+			this.direction2="";
+			player2.setMoving(false);
+
+		}
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		
+	
+	}
+	
 	
 	public void movePlayers() {
 		
@@ -290,47 +440,54 @@ public class World extends Canvas implements Runnable, KeyListener{
 			this.player2.moveDown(player2.getStep());
 		}
 	}
-	@Override
-	public void keyReleased(KeyEvent e) {
-		
-		//player1
-		if(e.getKeyCode()==KeyEvent.VK_A) {
-			this.direction1="";
-		}
-		else if(e.getKeyCode()==KeyEvent.VK_D) {
-			this.direction1="";
-		}
-		else if(e.getKeyCode()==KeyEvent.VK_W) {
-			this.direction1="";
-		}
-		else if(e.getKeyCode()==KeyEvent.VK_S) {
-			this.direction1="";
-		}
-		
-		
-		//player2
-		if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
-			this.direction2="";
-		}
-		else if (e.getKeyCode()==KeyEvent.VK_LEFT) {
-			this.direction2="";
-		}
-		else if (e.getKeyCode()==KeyEvent.VK_UP) {
-			this.direction2="";
-		}
-		else if (e.getKeyCode()==KeyEvent.VK_DOWN) {
-			this.direction2="";
-		}
-		
-	}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
-		
 	
+	public void moveMosters() {
+		
+		for(Monster m: Map.monsters) {
+			m.move();
+		}
 	}
-
-
+	
+	public  void drawGameOver() {
+		
+		BufferStrategy bs = this.getBufferStrategy();
+		
+		if(bs==null) {
+			this.createBufferStrategy(3);
+			return;
+		}
+		
+		g=bs.getDrawGraphics();
+		
+		
+		Spirit s=new Spirit("/system/gameover.png");
+		
+		g.drawImage(s.getImg(),Game.gameWorld.worldWidth/2,Game.gameWorld.WorldHeight/2,400,400,null);	
+		g.dispose();
+		
+	}
+	
+	
+	public void drawLevelUp() {
+		
+		BufferStrategy bs = this.getBufferStrategy();
+		
+		if(bs==null) {
+			this.createBufferStrategy(3);
+			return;
+		}
+		
+		g=bs.getDrawGraphics();
+		
+		
+		Spirit s=new Spirit("/system/levelup.png");
+		
+		g.drawImage(s.getImg(),Game.gameWorld.worldWidth/2,Game.gameWorld.WorldHeight/2,400,400,null);	
+		
+		g.dispose();
+	}
+	
 
 	public void setWorldName(String worldName) {
 		this.worldName = worldName;

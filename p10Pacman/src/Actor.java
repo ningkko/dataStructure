@@ -1,3 +1,5 @@
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 public class Actor extends Rectangle{
@@ -66,10 +68,12 @@ public class Actor extends Rectangle{
 	
 	public boolean canMove(int nextX, int nextY) {
 		
+		Point p=new Point(nextX,nextY);
+		Dimension d=new Dimension(this.width,this.height);
 		/**
 		 * bounds of the current actor if moves to the next position
 		 */
-		Rectangle bounds=new Rectangle(nextX,nextY,this.width,this.height);
+		Rectangle bounds=new Rectangle(p,d);
 		/**
 		 * the map we're currently using
 		 */

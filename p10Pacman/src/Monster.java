@@ -38,7 +38,7 @@ public class Monster extends Actor{
 
 	public Monster( int x , int y) {
 
-		this.spirit=new Spirit("/monster/ning1.png");
+		this.spirit=new Spirit("/monster/n1.png");
 		this.step=Game.monsterStep;
 		this.chasing=false;
 		this.detectableDistance=100;
@@ -163,6 +163,8 @@ public class Monster extends Actor{
 		}
 	}	
 	
+	
+	
 	public void randomlyMove() {
 		
 		
@@ -187,11 +189,13 @@ public class Monster extends Actor{
 	
 
 	
-		public void drawMonster(Graphics g) {
+	public void drawMonster(Graphics g) {
 			
-			g.drawImage(this.spirit.getImg(),x,y,null);
+		g.drawImage(this.spirit.getImg(),x,y,Game.playerSize,Game.playerSize,null);
 
 	}
+		
+	
 
 		
 

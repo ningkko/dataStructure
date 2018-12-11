@@ -1,7 +1,15 @@
+import java.awt.Canvas;
+import java.awt.Graphics;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 
-public class Game{
+public class Game extends Canvas{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 
 	/**
 	 * A world
@@ -29,33 +37,44 @@ public class Game{
 	 * Monster speed
 	 */
 	public static int monsterStep;
+	
 
 	/**
 	 * level
 	 */
 	public static String gameLevel;
 	
+
+	/**
+	 * painter
+	 */
+	public static Graphics g;
+	
+	
 	/**
 	 * if any of the players get caught by monsters
 	 */
 	public static boolean p1Lose, p2Lose;
 	
+	
+	
 	public static void main(String[] args) {
 		
 		int playerNumber=2;
-		new Game(768,576,"Koutenn Madness Returns",32,playerNumber);
+		new Game(768/4*5,576/4*5,"Koutenn Madness Returns",32/4*5,playerNumber);
 	}
 	
 	
 	
 	public Game(int worldWidth, int worldHeight, String worldName, int playerSize, int playerNumber) {
 		
+		
 		Game.playerSize=playerSize;
 		
 		ArrayList<Player> players=new ArrayList<Player>();
 		
-		Game.playerStep=3;
-		Game.monsterStep=1;
+		Game.playerStep=5;
+		Game.monsterStep=2;
 		
 		player1=new Player(50,100,1);
 		players.add(player1);
@@ -104,16 +123,45 @@ public class Game{
 	/**
 	 * if all food is eaten, enter new level
 	 */
-	public static void win() {
-		
-		if (World.map.food.size()==0) {
-			Game.nextLevel();
+		public static void checkWin() {
+			
+			if (World.map.food.size()<100) {
+				
+				Game.gameWorld.drawLevelUp();
+				
+				//pause for a sec
+				try 
+			    {
+				   Thread.sleep(2000);
+			    } 
+			    catch(Throwable e) 
+			    {
+			    	System.out.println(e.getMessage()); 
+			    }
+			   
+		   
+		   //go next level
+		   Game.nextLevel();
 		}
 	}
 	
+	public static boolean lose() {
+		
+		if (World.players.size()==2) {
+			if(Game.p1Lose&&Game.p2Lose) {
+				return true;
+			}
+		}else if(World.players.size()==1) {
+			if(Game.p1Lose) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	/**
-	 * manually enters abnew level
+	 * manually enters a new level
 	 */
 	public static void nextLevel() {
 		
@@ -133,9 +181,9 @@ public class Game{
 			
 		}
 		
-		
+
 		World.map=new Map(Game.gameLevel,World.players.size());
 	}
 	
-		
+	
 }

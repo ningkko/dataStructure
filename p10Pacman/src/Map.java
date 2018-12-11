@@ -1,4 +1,5 @@
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +24,9 @@ public class Map {
 	/**
 	 * monsters
 	 */
-	public ArrayList<Monster> monsters;
+	public static ArrayList<Monster> monsters;
+	
+	
 	
 	
 	public Map(String level, int playerSize) {
@@ -55,6 +58,11 @@ public class Map {
 					//else if the position on the map is a red tile,
 					else if(colorValue==0xFFFF0000) {
 						
+						//remember the start position so later when the player is touched by a monster
+						//we can put it back to the place
+						Game.player1.setStartX(mapX*playerSize);
+						Game.player1.setStartY(mapY*playerSize);
+
 						//move player 1 to the position
 						Game.player1.x=mapX*playerSize;
 						Game.player1.y=mapY*playerSize;
@@ -62,7 +70,10 @@ public class Map {
 					// if purple
 					else if(colorValue==0xFFFF00FF) {
 						
-						// move player2 there
+						Game.player2.setStartX(mapX*playerSize);
+						Game.player2.setStartY(mapY*playerSize);
+
+						//move player 1 to the position
 						Game.player2.x=mapX*playerSize;
 						Game.player2.y=mapY*playerSize;
 					}
@@ -108,34 +119,8 @@ public class Map {
 		}
 		
 	}
-	
-	/**
-	 * Since I created monsters inside map, this function is for moving monsters in World.
-	 */
-	public void moveMosters() {
-		
-		for(Monster m: monsters) {
-			m.move();
-		}
-	}
-	
-	public void detectLose() {
-		
-		for (Monster m:monsters) {
-			
-			if(Math.abs(Game.player1.getX()-m.getX())<20&&
-				Math.abs(Game.player1.getY()-m.getY())<20) {
-				
-				Game.p1Lose=true;
-			}
-			
-			if(Math.abs(Game.player2.getX()-m.getX())<20&&
-					Math.abs(Game.player1.getY()-m.getY())<20) {
-					
-					Game.p2Lose=true;
-				}
-		}
-	}
+
+
 	
 
 }

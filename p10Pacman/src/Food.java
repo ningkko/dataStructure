@@ -12,14 +12,14 @@ public class Food extends Rectangle{
 
 	public Food( int x , int y) {
 		
-		setBounds(x*Game.playerSize,y*Game.playerSize,Game.playerSize, Game.playerSize);
+		setBounds(x*Game.playerSize,y*Game.playerSize,Game.playerSize/4, Game.playerSize/4);
 	
 	}
 	
 	public void drawFood(Graphics g) {
 		
 		g.setColor(Color.GREEN);
-		g.fillRect(x+10, y+10, 8, 8);
+		g.fillRect(x+12, y+12, 4, 4);
 		
 	}
 }
