@@ -39,12 +39,14 @@ public class Monster extends Actor{
 	public Monster( int x , int y) {
 
 		this.spirit=new Spirit("/monster/n1.png");
+		
 		this.step=Game.monsterStep;
 		this.chasing=false;
 		this.detectableDistance=100;
-		this.setStep(Game.monsterStep);
+
 		setBounds(x*Game.playerSize,y*Game.playerSize,Game.playerSize, Game.playerSize);
 		
+
 	}
 	
 	public void move() {
@@ -56,7 +58,7 @@ public class Monster extends Actor{
 		boolean nearP1=false;
 		
 		//stop chasing once caught
-		if(!Game.p1Lose) {
+		if(!Game.p1Lose&&!Game.player1.isImmune()) {
 			
 			if ((Math.abs(this.getX()-Game.player1.getX())<=detectableDistance)&&
 					(Math.abs(this.getY()-Game.player1.getY())<=detectableDistance)) {
@@ -70,7 +72,7 @@ public class Monster extends Actor{
 		 */
 		boolean nearP2=false;
 		
-		if(!Game.p2Lose) {
+		if(!Game.p2Lose&&!Game.player2.isImmune()) {
 			
 			if ((Math.abs(this.getX()-Game.player2.getX())<=detectableDistance)&&
 					(Math.abs(this.getY()-Game.player2.getY())<=detectableDistance)) {
@@ -112,7 +114,7 @@ public class Monster extends Actor{
 			
 		}
 		
-		
+		System.out.println(this.direction);
 	}
 	
 	
@@ -146,32 +148,19 @@ public class Monster extends Actor{
 		
 	}
 	
-	public void selectNewDirection() {
-		double chance=Math.random();
-		
-		if(chance<0.25) {
-			this.direction=1;
-		}
-		else if(Math.abs(chance-0.25)<0.25) {
-			this.direction=2;
-			
-		}else if(Math.abs(chance-0.5)<0.25) {
-			this.direction= 3;
-			
-		}else {
-			this.direction= 4;
-		}
-	}	
-	
 	
 	
 	public void randomlyMove() {
 		
-		
+		// select a random direction
 		if (Math.random()<0.05) {
 			this.selectNewDirection();
 		}
 		
+		// change direction if at a crossover
+		this.moveAtCrossover();
+		
+		//move
 		if(this.direction==1) {
 			this.moveLeft(this.step);
 		}
@@ -182,7 +171,134 @@ public class Monster extends Actor{
 			this.moveUp(this.step);
 		}
 		else if(this.direction==4){
-			this.moveUp(this.step);
+			this.moveDown(this.step);
+		}
+		
+	}
+	
+	public void selectNewDirection() {
+		
+		
+		// till the monster chooses a valid direction
+		while(true) {
+			
+			double chance=Math.random();
+			
+			if(chance<0.25&&this.canMove(this.x-this.step, this.y)) {
+				this.direction=1;
+				break;
+			}
+			else if(Math.abs(chance-0.25)<0.25&&this.canMove(this.x+this.step, this.y)) {
+				this.direction=2;
+				break;
+				
+			}else if(Math.abs(chance-0.5)<0.25&&this.canMove(this.x, this.y-this.step)) {
+				this.direction= 3;
+				break;
+				
+			}else if(chance>=0.75&&this.canMove(this.x, this.y+this.step)){
+				this.direction= 4;
+				break;
+			}
+		}
+	}	
+	
+	
+	public void moveAtCrossover() {
+		
+		boolean l=this.canMove(this.x-this.step, this.y);
+		boolean r=this.canMove(this.x+this.step, this.y);
+		boolean u=this.canMove(this.x, this.y-this.step);
+		boolean d=this.canMove(this.x, this.y+this.step);
+		
+		//0.4 possibility to change direction at a crossover
+		if(Math.random()<0.4) {
+			
+			
+			// if moving left
+			if (this.direction==1) {
+				
+				// can turn both up and down
+				if(u&&d) {
+					if(Math.random()<0.5) {
+						//turn left
+						this.direction=3;
+						
+					}else {
+						//or turn right
+						this.direction=4;
+						
+					}
+				}else if(u) {
+					this.direction=3;
+				}else if(d) {
+					this.direction=4;
+				}
+				
+			}
+			// if moving right
+			else if (this.direction==2) {
+				
+				// can turn both up and down
+				if(u&&d) {
+					if(Math.random()<0.5) {
+						//turn left
+						this.direction=3;
+						
+					}else {
+						//or turn right
+						this.direction=4;
+						
+					}
+				}else if(u) {
+					this.direction=3;
+				}else if(d) {
+					this.direction=4;
+				}
+				
+			}
+			// if moving up
+			else if(this.direction==3) {
+				
+				// can turn both left and right
+				if(l&&r) {
+					if(Math.random()<0.5) {
+						//turn left
+						this.direction=1;
+						
+					}else {
+						//or turn right
+						this.direction=2;
+						
+					}
+				}else if(l) {
+					this.direction=1;
+				}else if(r) {
+					this.direction=2;
+				}
+			}
+			
+			// if moving down
+			else if (this.direction==4) {
+				
+				// can turn both up and down
+				if(l&&r) {
+					if(Math.random()<0.5) {
+						//turn left
+						this.direction=1;
+						
+					}else {
+						//or turn right
+						this.direction=2;
+						
+					}
+				}else if(l) {
+					this.direction=1;
+				}else if(r) {
+					this.direction=2;
+				}
+				
+			}
 		}
 		
 	}

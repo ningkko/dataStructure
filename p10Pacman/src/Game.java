@@ -123,21 +123,21 @@ public class Game extends Canvas{
 	/**
 	 * if all food is eaten, enter new level
 	 */
-		public static void checkWin() {
+	public static void checkWin() {
+		
+		if (World.map.food.size()<100) {
 			
-			if (World.map.food.size()<100) {
-				
-				Game.gameWorld.drawLevelUp();
-				
-				//pause for a sec
-				try 
-			    {
-				   Thread.sleep(2000);
-			    } 
-			    catch(Throwable e) 
-			    {
-			    	System.out.println(e.getMessage()); 
-			    }
+			Game.gameWorld.drawLevelUp();
+			
+			//pause for a sec
+			try 
+		    {
+			   Thread.sleep(2000);
+		    } 
+		    catch(Throwable e) 
+		    {
+		    	System.out.println(e.getMessage()); 
+		    }
 			   
 		   
 		   //go next level
