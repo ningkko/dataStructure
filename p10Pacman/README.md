@@ -14,4 +14,6 @@ TO-DO
 13. move more flexibly without bumping into things
 14. shimmering effect
 15. <del>reborn, immune to monsters for 5 sec after reborn</del>
+16. Show life and points
+17. Show level up and game over
 
