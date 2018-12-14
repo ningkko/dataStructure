@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -34,10 +35,6 @@ public class Player extends Actor{
 	 */
 	private int points;
 	
-	/**
-	 * use gif?..
-	 */
-	private boolean flash;
 	
 	/**
 	 * can the player be attacked?
@@ -63,7 +60,6 @@ public class Player extends Actor{
 		this.playerID=playerID;
 		this.step=Game.playerStep;
 		this.life=3;
-		this.flash=false;
 		this.immune=false;
 		this.useImageNum=1;
 		this.isMoving=false;
@@ -74,29 +70,30 @@ public class Player extends Actor{
 	
 	public void draw(Graphics g) {
 		
+		
 		Spirit spirit = null;
-		if(this.playerID==1&&this.flash==false&&this.useImageNum==1) {
+		if(this.playerID==1&&this.useImageNum==1) {
 			spirit=new Spirit("/players/i1.png");	
 		}
-		else if(this.playerID==1&&this.flash==false&&this.useImageNum==2) {
+		else if(this.playerID==1&&this.useImageNum==2) {
 			spirit=new Spirit("/players/i2.png");	
 		}
-		else if (this.playerID==1&&this.flash==true){
-			spirit=new Spirit("/players/idead.gif");
-		}
-		else if(this.playerID==2&&this.flash==false&&this.useImageNum==1) {
+		else if(this.playerID==2&&this.useImageNum==1) {
 			spirit=new Spirit("/players/e1.png");
 		
-		}else if(this.playerID==2&&this.flash==false&&this.useImageNum==2) {
+		}else if(this.playerID==2&&this.useImageNum==2) {
 			spirit=new Spirit("/players/e2.png");
-		
-		}else if(this.playerID==2&&this.flash==true) {
-			spirit=new Spirit("/players/edead.gif");
-		
+
 		}
 		
+		if(this.immune) {
+			
+			g.setColor(Color.red);
+			
+		}
 		g.drawImage(spirit.getImg(),x,y,Game.playerSize,Game.playerSize,null);
-		
+		g.drawRect(this.x, this.y, Game.playerSize, Game.playerSize);
+		g.setColor(new Color(1f,0f,0f,0f ));
 	}
 	
 	
@@ -105,6 +102,13 @@ public class Player extends Actor{
 		
 		Point p=new Point(nextX,nextY);
 		Dimension d=new Dimension(this.width,this.height);
+		
+//		int tileX = nextX / Game.playerSize;
+//		int tileY = nextY / Game.playerSize;
+//		
+//		return map.walls[tileX][tileY] == null;
+		
+		
 		/**
 		 * bounds of the current actor if moves to the next position
 		 */
@@ -149,8 +153,25 @@ public class Player extends Actor{
 		
 		for(Food f:map.food) {
 			if (this.intersects(f)) {
+				if(f.getType()==0) {
+					
+					this.points+=10;
+					
+				}else if(f.getType()==1) {
+					
+					this.life+=1;
+					
+				}else if(f.getType()==2) {
+					
+					this.enterIndefectible();
+					
+				}else if(f.getType()==3) {
+					
+					this.points+=100;
+				}
+				
+				
 				map.food.remove(f);
-				this.points+=10;
 				break;
 			}
 		}
@@ -162,7 +183,7 @@ public class Player extends Actor{
 		this.immune=true;
 		
 		if(this.playerID==1) {
-		
+	
 			//turn back to false after 5 sec
 			Timer timer=new Timer();
 			timer.schedule(new TimerTask() {
@@ -171,10 +192,9 @@ public class Player extends Actor{
 				  public void run() {
 					  
 					  Game.player1.setImmune(false);
-					  Game.player1.flash=false;
 					  
 				  }
-				}, 4*1000);
+				}, 5*1000);
 			
 		}
 		else if(this.playerID==2) {
@@ -187,7 +207,6 @@ public class Player extends Actor{
 				  public void run() {
 					  
 					  Game.player2.setImmune(false);
-					  Game.player2.flash=false;
 					  
 				  }
 				}, 4*1000);
@@ -202,7 +221,6 @@ public class Player extends Actor{
 				
 				if(this.intersects(m)&&!this.immune) {
 					if(this.life>0) {
-						this.flash=true;
 						this.enterIndefectible();
 						this.x=this.startX;
 						this.y=this.startY;
@@ -300,13 +318,13 @@ public class Player extends Actor{
 
 
 
-	public boolean isImmune() {
+	public synchronized boolean isImmune() {
 		return immune;
 	}
 
 
 
-	public void setImmune(boolean immune) {
+	public synchronized void setImmune(boolean immune) {
 		this.immune = immune;
 	}
 	
@@ -334,19 +352,6 @@ public class Player extends Actor{
 	public void setStartY(int startY) {
 		this.startY = startY;
 	}
-
-
-
-	public boolean isFlash() {
-		return flash;
-	}
-
-
-
-	public void setFlash(boolean flash) {
-		this.flash = flash;
-	}
-
 
 
 	public int getUseImageNum() {

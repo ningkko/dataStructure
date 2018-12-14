@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 
 public class Actor extends Rectangle{
 
-
 	/**
 	 * 
 	 */
@@ -14,6 +13,7 @@ public class Actor extends Rectangle{
 	 * pixels per step
 	 */
 	protected int step;
+	public Map map;
 	
 	public Actor() {
 		// TODO Auto-generated constructor stub
@@ -77,7 +77,6 @@ public class Actor extends Rectangle{
 		/**
 		 * the map we're currently using
 		 */
-		Map map=World.map;
 		
 		// check for each cell in the walls list
 		for(int mapX=0; mapX<map.walls.length;mapX++) {

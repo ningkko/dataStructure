@@ -61,7 +61,7 @@ public class Game extends Canvas{
 	public static void main(String[] args) {
 		
 		int playerNumber=2;
-		new Game(768/4*5,576/4*5,"Koutenn Madness Returns",32/4*5,playerNumber);
+		new Game(768*4/3,576*4/3,"Koutenn Madness Returns",32*4/3,playerNumber);
 	}
 	
 	
@@ -74,7 +74,7 @@ public class Game extends Canvas{
 		ArrayList<Player> players=new ArrayList<Player>();
 		
 		Game.playerStep=5;
-		Game.monsterStep=2;
+		Game.monsterStep=1;
 		
 		player1=new Player(50,100,1);
 		players.add(player1);
@@ -170,19 +170,19 @@ public class Game extends Canvas{
 			Game.gameLevel="l2";
 			
 		}
-		else if(Game.gameLevel=="l1") {
-			
-			Game.gameLevel="l3";
-			
-		}
-		else if(Game.gameLevel=="l3") {
-			
-			Game.gameLevel="l4";
-			
-		}
+//		else if(Game.gameLevel=="l2") {
+//			
+//			Game.gameLevel="l3";
+//			
+//		}
+//		else if(Game.gameLevel=="l3") {
+//			
+//			Game.gameLevel="l4";
+//			
+//		}
 		
 
-		World.map=new Map(Game.gameLevel,World.players.size());
+		World.map=new Map(Game.gameLevel,Game.playerSize);
 	}
 	
 	

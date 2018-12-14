@@ -1,5 +1,4 @@
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -94,6 +93,11 @@ public class Map {
 		}
 		catch(IOException e) {
 			e.printStackTrace();
+		}
+		
+		for(Monster m: monsters) {
+			m.map= this;
+			m.selectNewDirection();
 		}
 	}
 	

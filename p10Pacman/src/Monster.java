@@ -1,6 +1,14 @@
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Monster extends Actor{
+	
+	/**
+	 * images it should use
+	 */
+	private int useImageNum;
 
 	/**
 	 * is the monster chasing some player yet?
@@ -24,12 +32,7 @@ public class Monster extends Actor{
 	 * range able to detect player
 	 */
 	private int detectableDistance;
-	
-	
-	/**
-	 * spirit
-	 */
-	public Spirit spirit;
+
 	
 	/**
 	 * 
@@ -38,16 +41,17 @@ public class Monster extends Actor{
 
 	public Monster( int x , int y) {
 
-		this.spirit=new Spirit("/monster/n1.png");
-		
 		this.step=Game.monsterStep;
 		this.chasing=false;
 		this.detectableDistance=100;
+		this.useImageNum=1;
 
 		setBounds(x*Game.playerSize,y*Game.playerSize,Game.playerSize, Game.playerSize);
 		
 
 	}
+	
+	
 	
 	public void move() {
 		
@@ -56,7 +60,7 @@ public class Monster extends Actor{
 		 * within detectable distance of P1?
 		 */
 		boolean nearP1=false;
-		
+
 		//stop chasing once caught
 		if(!Game.p1Lose&&!Game.player1.isImmune()) {
 			
@@ -81,7 +85,7 @@ public class Monster extends Actor{
 				
 			}
 		}
-		
+
 		if(this.chasing==false) {
 			
 			this.randomlyMove();
@@ -114,7 +118,6 @@ public class Monster extends Actor{
 			
 		}
 		
-		System.out.println(this.direction);
 	}
 	
 	
@@ -152,13 +155,14 @@ public class Monster extends Actor{
 	
 	public void randomlyMove() {
 		
-		// select a random direction
-		if (Math.random()<0.05) {
-			this.selectNewDirection();
+		if(Game.gameLevel.equals("l1")) {
+			// change direction if at a crossover
+			this.moveAtCrossover();
+		}else if (Game.gameLevel.equals("l2")) {
+			if(Math.random()<0.02) {
+				this.selectNewDirection();
+			}
 		}
-		
-		// change direction if at a crossover
-		this.moveAtCrossover();
 		
 		//move
 		if(this.direction==1) {
@@ -188,11 +192,12 @@ public class Monster extends Actor{
 				this.direction=1;
 				break;
 			}
-			else if(Math.abs(chance-0.25)<0.25&&this.canMove(this.x+this.step, this.y)) {
+			else if(chance<0.5&&chance>=0.25&&this.canMove(this.x+this.step, this.y)) {
 				this.direction=2;
 				break;
 				
-			}else if(Math.abs(chance-0.5)<0.25&&this.canMove(this.x, this.y-this.step)) {
+			}else if(chance<0.75&&chance>=0.5&&this.canMove(this.x, this.y-this.step)) {
+				
 				this.direction= 3;
 				break;
 				
@@ -210,96 +215,31 @@ public class Monster extends Actor{
 		boolean r=this.canMove(this.x+this.step, this.y);
 		boolean u=this.canMove(this.x, this.y-this.step);
 		boolean d=this.canMove(this.x, this.y+this.step);
+		List<Integer> possible = new ArrayList<>();
+		if (l) {
+			possible.add(1);
+		}
+		if (r) {
+			possible.add(2);
+		}
+		if (u) {
+			possible.add(3);
+		}
+		if (d) {
+			possible.add(4);
+		}
 		
-		//0.4 possibility to change direction at a crossover
-		if(Math.random()<0.4) {
-			
-			
-			// if moving left
-			if (this.direction==1) {
-				
-				// can turn both up and down
-				if(u&&d) {
-					if(Math.random()<0.5) {
-						//turn left
-						this.direction=3;
-						
-					}else {
-						//or turn right
-						this.direction=4;
-						
-					}
-				}else if(u) {
-					this.direction=3;
-				}else if(d) {
-					this.direction=4;
-				}
-				
+		
+		if (possible.contains(this.direction)) {
+			if (possible.size()<=2) {
+				return;
 			}
-			// if moving right
-			else if (this.direction==2) {
-				
-				// can turn both up and down
-				if(u&&d) {
-					if(Math.random()<0.5) {
-						//turn left
-						this.direction=3;
-						
-					}else {
-						//or turn right
-						this.direction=4;
-						
-					}
-				}else if(u) {
-					this.direction=3;
-				}else if(d) {
-					this.direction=4;
-				}
-				
-			}
-			// if moving up
-			else if(this.direction==3) {
-				
-				// can turn both left and right
-				if(l&&r) {
-					if(Math.random()<0.5) {
-						//turn left
-						this.direction=1;
-						
-					}else {
-						//or turn right
-						this.direction=2;
-						
-					}
-				}else if(l) {
-					this.direction=1;
-				}else if(r) {
-					this.direction=2;
-				}
-			}
-			
-			// if moving down
-			else if (this.direction==4) {
-				
-				// can turn both up and down
-				if(l&&r) {
-					if(Math.random()<0.5) {
-						//turn left
-						this.direction=1;
-						
-					}else {
-						//or turn right
-						this.direction=2;
-						
-					}
-				}else if(l) {
-					this.direction=1;
-				}else if(r) {
-					this.direction=2;
-				}
-				
+			if (Math.random()<0.8) {
+				return;
 			}
 		}
+		
+		this.direction = possible.get(ThreadLocalRandom.current().nextInt(possible.size()));
 		
 	}
 	
@@ -307,12 +247,30 @@ public class Monster extends Actor{
 	
 	public void drawMonster(Graphics g) {
 			
-		g.drawImage(this.spirit.getImg(),x,y,Game.playerSize,Game.playerSize,null);
+		Spirit spirit = null;
+	
+		if(this.useImageNum==1) {
+			spirit=new Spirit("/monster/n1.png");
+			
+		
+		}else {
+			spirit=new Spirit("/monster/n2.png");
+
+		}
+		
+		g.drawImage(spirit.getImg(),x,y,Game.playerSize,Game.playerSize,null);
+		
 
 	}
 		
 	
-
+	public int useImageNum() {
+		return this.useImageNum;
+	}
 		
+	public void setUseImageNum(int n) {
+		this.useImageNum=n;
+	}
+	
 
 }

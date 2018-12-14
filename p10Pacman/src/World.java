@@ -185,7 +185,7 @@ public class World extends Canvas implements Runnable, KeyListener{
 		 * for changing images
 		 */
 		int frameP1 = 0,frameP2=0;
-		
+		int frameMonster=0;
 		
 		while(isRunning) {
 			
@@ -225,6 +225,22 @@ public class World extends Canvas implements Runnable, KeyListener{
 					frameP1=0;
 				}
 
+				if(frameMonster==21) {
+					
+					for(Monster m: Map.monsters) {
+						m.setUseImageNum(1);
+					}
+					
+					
+				}else if(frameMonster==40) {
+
+					for(Monster m: Map.monsters) {
+						m.setUseImageNum(2);
+					}
+					
+					frameMonster=0;
+				}
+				frameMonster++;	
 				
 				// DETECT LOSE
 				if(Game.lose()) {
