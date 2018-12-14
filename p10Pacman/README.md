@@ -11,7 +11,7 @@ TO-DO
 10. interaction 
 11. main page panel
 12. sound and other
-13. move more flexibly without bumping into intems
+13. move more flexibly without bumping into things
 14. shimmering effect
 15. <del>reborn, immune to monsters for 5 sec after reborn</del>
 
